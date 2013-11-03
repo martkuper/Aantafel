@@ -8,8 +8,9 @@
 
 include 'db_connect.php';
 
-if(isset($_POST['token']) && !empty($_POST['token'])){
+if(isset($_GET['token']) && !empty($_GET['token']) && isset($_GET['id']) && !empty($_GET['id'])){
     $token = preg_replace("/[^a-zA-Z0-9]+/", "", $_POST['token']);
+    $id = preg_replace("/[^0-9]+/", "", $_POST['id']);
 }else{
     header('Location: /@tafel/resetpass.php?error=1');
 }
@@ -25,8 +26,8 @@ $stmt->execute(array(':pass' => $token));
 $newpass = hash('sha512', $password.$Salt);
 
 try{
-    $stmt = $link->prepare("UPDATE Klant SET Wachtwoord=:newpass WHERE Wachtwoord=:oldpass");
-    $stmt->execute(array(':newpass' => $newpass, ':oldpass' => $token));
+    $stmt = $link->prepare("UPDATE Klant SET Wachtwoord=:newpass WHERE Klantnr=:id");
+    $stmt->execute(array(':newpass' => $newpass, ':id' => $id));
 
 }catch(PDOException $e){
     trigger_error("MySQL failure: " . $e->getMessage(), E_USER_ERROR);

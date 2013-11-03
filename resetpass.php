@@ -7,8 +7,9 @@
  */
 
 if(!isset($_GET['error'])){
-    if(isset($_GET['token']) && !empty($_GET['token'])){
+    if(isset($_GET['token']) && !empty($_GET['token']) && isset($_GET['id']) && !empty($_GET['id'])){
         $token = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['token']);
+        $id = preg_replace("/[^0-9]+/", "", $_GET['id']);
     }else{
         header('Location: /@tafel/resetpass.php?error=1');
     }
@@ -43,6 +44,7 @@ echo '
                                     <input name="password" type="password" autocomplete="off" onkeyup="process_password()" placeholder="Nieuw Wachtwoord" id="password" required/>
                                     <div id="password_status"><img id="password_image" src="images/trans-back.png" /></div>
                                     <input name="token" type="hidden" value="' . $token . '" />
+                                    <input name="id" type="hidden" value="' . $id . '" />
                                 <!--<div id="status"><img id="image" src="images/trans-back.png" /></div>-->
 			</div>
 			<div onmouseover="checkfields2()">
