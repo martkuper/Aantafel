@@ -164,7 +164,7 @@ form:after {
     font: 13px Helvetica, Arial, sans-serif;
     margin: 0 0 10px;
     padding: 15px 10px 15px 40px;
-    width: 80%;
+    width: 75%;
     float: left;
 }
 #content2 form input[type="email"]:focus,
@@ -182,7 +182,7 @@ form:after {
 #username { background-position: 10px -53px !important }
 #email { background-position: 10px 10px !important }
 #password { background-position: 10px -53px !important }
-#content2 form input[type="submit"] {
+#content2 form input[type="button"] {
     background: rgb(254,231,154);
     background: -moz-linear-gradient(top,  rgba(254,231,154,1) 0%, rgba(254,193,81,1) 100%);
     background: -webkit-linear-gradient(top,  rgba(254,231,154,1) 0%,rgba(254,193,81,1) 100%);
@@ -211,7 +211,7 @@ form:after {
     text-shadow: 0 1px 0 rgba(255,255,255,0.5);
     width: 120px;
 }
-#content2 form input[type="submit"]:hover {
+#content2 form input[type="button"]:hover {
     background: rgb(254,193,81);
     background: -moz-linear-gradient(top,  rgba(254,193,81,1) 0%, rgba(254,231,154,1) 100%);
     background: -webkit-linear-gradient(top,  rgba(254,193,81,1) 0%,rgba(254,231,154,1) 100%);
@@ -263,4 +263,12 @@ form:after {
 .button a:hover {
     background-position: 0 -135px;
     color: #00aeef;
+}
+
+#password_status{
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    padding-top: 14px;
+    border: none;
 }

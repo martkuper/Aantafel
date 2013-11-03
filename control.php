@@ -1,7 +1,7 @@
 <?php
 
 /* CONTROL.PHP
- * 
+ *
  * Created by Loran Oosterhaven and Hein Rietman
  * Start date 10/29/2013
  * Last edit date 10/29/2013
@@ -13,6 +13,17 @@ include 'inc/footer.php';
 
 define("MAXIMGSIZE", 250000);
 define("PHOTOPATH", "images/products/");
+
+function is_image($path){
+    //http://www.binarytides.com/php-check-if-file-is-an-image/
+    $a = getimagesize($path);
+    $image_type = $a[2];
+     
+    if(in_array($image_type , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP))){
+        return true;
+    }
+    return false;
+}
 
 function uploadPhoto() {
     if (($_FILES["photo"]["type"] == "image/png") ||
@@ -26,12 +37,21 @@ function uploadPhoto() {
             $photoname .= $ext;
             $_FILES["photo"]["name"] = $photoname;
 
-            move_uploaded_file($_FILES["photo"]["tmp_name"], "images/products/" . $_FILES["photo"]["name"]);
+            move_uploaded_file($_FILES["photo"]["tmp_name"], PHOTOPATH . $_FILES["photo"]["name"]);
             return true;
         }
     } else {
         return false;
     }
+}
+
+function deleteProductPhoto($s){
+    $res = mysql_query("SELECT * FROM Producten WHERE Productnr =" . $s);
+    $row = mysql_fetch_assoc($res);
+    $fp = $row['Image'];
+    if (is_file($fp) && is_image($fp)){
+        unlink($fp);
+  }
 }
 
 function showCustomerOrderLog() {
@@ -45,22 +65,22 @@ function showCustomerOrderLog() {
 
     if (mysql_num_rows($ordersResult) > 0) {
         echo '<table border="0" align="center">
-                    <tr>
-                    <th width="200px" bgcolor="#999">Nummer</th>
-                    <th width="200px" bgcolor="#999">Klantnummer</th>
-                    <th width="200px" bgcolor="#999">Besteldatum</th>
-                    <th width="200px" bgcolor="#999">Producten</th>
-                    <th width="200px" bgcolor="#999">Totaalprijs</th></tr>';
+                   <tr>
+                   <th width="200px" bgcolor="#999">Nummer</th>
+                   <th width="200px" bgcolor="#999">Klantnummer</th>
+                   <th width="200px" bgcolor="#999">Besteldatum</th>
+                   <th width="200px" bgcolor="#999">Producten</th>
+                   <th width="200px" bgcolor="#999">Totaalprijs</th></tr>';
 
         while ($order = mysql_fetch_assoc($ordersResult)) {
             echo '<tr>
-                            <td bgcolor="#DDD">' . $order['Bestellingnr'] . '</td>
-                            <td bgcolor="#DDD">' . $order['Klantnr'] . '</td>
-                            <td bgcolor="#DDD">' . $order['Besteldatum'] . '</td>
-                            <td bgcolor="#DDD">' . $order['Producten'] . '</td>
-                            <td bgcolor="#DDD">' . $order['Totaalprijs'] . '</td>
-                            <td><a href="control.php?do=customerorderlog&delete=' . $order['Bestellingnr'] . '"><img src="images/close.png"></a></td>
-                          </tr>';
+                           <td bgcolor="#DDD">' . $order['Bestellingnr'] . '</td>
+                           <td bgcolor="#DDD">' . $order['Klantnr'] . '</td>
+                           <td bgcolor="#DDD">' . $order['Besteldatum'] . '</td>
+                           <td bgcolor="#DDD">' . $order['Producten'] . '</td>
+                           <td bgcolor="#DDD">' . $order['Totaalprijs'] . '</td>
+                           <td><a href="control.php?do=customerorderlog&delete=' . $order['Bestellingnr'] . '"><img src="images/close.png"></a></td>
+                         </tr>';
         }
 
         echo '</table>';
@@ -81,27 +101,34 @@ function generalSettings() {
     $general = mysql_fetch_assoc($generalResult);
 
     echo '<form action="" method="POST">
-                    Email: <br><input type="text" name="email" value="' . $general['Email'] . '"><br><br>
-                    Telefoon: <br><input type="text" name="telefoon" value="' . $general['Telefoon'] . '"><br><br>
-                    Adres: <br><input type="text" name="adres" value="' . $general['Adres'] . '"><br><br>
-                    <input type="submit" name="editbutton" value="Bewerk" /> 
-                </form>';
+                   Email: <br><input type="text" name="email" value="' . $general['Email'] . '"><br><br>
+                   Telefoon: <br><input type="text" name="telefoon" value="' . $general['Telefoon'] . '"><br><br>
+                   Adres: <br><input type="text" name="adres" value="' . $general['Adres'] . '"><br><br>
+                   <input type="submit" name="editbutton" value="Bewerk" />
+               </form>';
 }
 
 function manageProducts() {
     echo '<br><h3>Beheer producten</h3>';
-
+    
     if (isset($_POST['addbutton'])) {
         if (uploadPhoto()) {
             $q = 'INSERT INTO Producten VALUES (\'DEFAULT\', \'' . $_POST['name'] . '\', \'' . $_POST['price']
-                    . '\', \'' . $_POST['description'] . '\', \'' . "images/products/" . $_FILES['photo']['name'] . '\', ' . $_POST['categorienr'] .')';
+                    . '\', \'' . $_POST['description'] . '\', \'' . PHOTOPATH . $_FILES['photo']['name'] . '\', ' . $_POST['categorienr'] . ')';
             mysql_query($q);
             echo 'Artikel toegevoegd!';
         }
     }
 
     if (isset($_POST['submiteditbutton'])) {
-        $q = "UPDATE Producten SET"
+        if (!empty($_FILES) && uploadPhoto()) {
+            $q = sprintf("UPDATE Producten SET Naam='%s', Verkoopprijs=%f, Omschrijving='%s', Image = '%s',Categorienr=%d where Productnr=%d", mysql_real_escape_string($_POST['name']), mysql_real_escape_string($_POST['price']), mysql_real_escape_string($_POST['description']), mysql_real_escape_string(PHOTOPATH . $_FILES['photo']['name']), mysql_real_escape_string($_POST['categorienr']), mysql_real_escape_string($_GET['edit']));
+        } else {
+            // Geen foto ge-upload
+            $q = sprintf("UPDATE Producten SET Naam='%s', Verkoopprijs=%f, Omschrijving='%s', Categorienr=%d where Productnr=%d", mysql_real_escape_string($_POST['name']), mysql_real_escape_string($_POST['price']), mysql_real_escape_string($_POST['description']), mysql_real_escape_string($_POST['categorienr']), mysql_real_escape_string($_GET['edit']));
+        }
+
+        mysql_query($q);
     }
 
     if (isset($_GET['edit'])) {
@@ -109,72 +136,70 @@ function manageProducts() {
         $product = mysql_fetch_assoc($productResult);
 
         echo '<br><h4>Bewerk een product: </h4><br>
-            <form action="" method="POST" enctype="multipart/form-data"><br>
-            <table>
-            <tr><td>Naam: </td> <td><input type="text" name="name" value= ' . $product['Naam'] . '></td></tr>
-            <tr><td>Prijs: </td> <td><input type="text" name="price" value= ' . $product['Verkoopprijs'] . '></td></tr>
-            <tr><td>Omschrijving: </td> <td><input type="text" name="description" value= ' . $product['Omschrijving'] . '></td></tr>
-            <tr><td>Categorienummer: </td> <td><input type="text" name="categorienr" value= ' . $product['Categorienr'] . '></td></tr>
-            <tr><td>Upload een foto: </td> <td><input type="file" name="photo"></td></tr>
-            <tr><td><br></td></tr>
-            <tr><td><td><input type="submit" name="submiteditbutton" value="Bewerk"/></td></td></tr>
-            </table>
-            </form>';
+           <form action="" method="POST" enctype="multipart/form-data">
+           Naam: <br><input type="text" name="name" value= ' . $product['Naam'] . '><br><br>
+           Prijs: <br><input type="text" name="price" value= ' . $product['Verkoopprijs'] . '><br><br>
+           Omschrijving: <br><input type="text" name="description" value= ' . $product['Omschrijving'] . '><br><br>
+           Categorienummer: <br><input type="text" name="categorienr" value= ' . $product['Categorienr'] . '><br><br>
+           Upload een foto (maximale grootte : ' . MAXIMGSIZE / 1000 . 'kb) <br><input type="file" name="photo"><br><br>
+           <input type="submit" name="submiteditbutton" value="Bewerk"/>
+           </form>';
     } else {
         $categorieResult = mysql_query('SELECT * FROM Categorie');
 
         echo '<br><h4>Voeg een product toe: </h4><br>
-                <form action="" method="POST" enctype="multipart/form-data">
-                Naam: <br><input type="text" name="name"><br><br>
-                Prijs: <br><input type="text" name="price"><br><br>
-                Omschrijving: <br><input type="text" name="description"><br><br>
-                Categorie: <br><select name="categorienr">';
+               <form action="" method="POST" enctype="multipart/form-data">
+               Naam: <br><input type="text" name="name"><br><br>
+               Prijs: <br><input type="text" name="price"><br><br>
+               Omschrijving: <br><input type="text" name="description"><br><br>
+               Categorie: <br><select name="categorienr">';
 
         while ($categorie = mysql_fetch_assoc($categorieResult)) {
             echo '<option value="' . $categorie['Categorienr'] . '">' . $categorie['Name'] . '</option>';
         }
 
         echo '</select><br><br>
-                Upload een foto: maximale grootte : ' . MAXIMGSIZE/1000 . 'kb <br><input type="file" name="photo"><br><br>
-                <input type="submit" name="addbutton" value="Toevoegen"/>
-                </form>';
-    }
+               Upload een foto (maximale grootte : ' . MAXIMGSIZE / 1000 . ')kb <br><input type="file" name="photo"><br><br>
+               <input type="submit" name="addbutton" value="Toevoegen"/>
+               </form>';
 
-    echo '<br><h4>Beheer bestaand product</h4><br>';
+        echo '<br><h4>Beheer bestaand product</h4><br>';
 
-    if (isset($_GET['delete'])) {
-        mysql_query('DELETE FROM Producten WHERE Productnr=' . $_GET['delete']);
-    }
-
-    $productResult = mysql_query('SELECT * FROM Producten');
-
-    if (mysql_num_rows($productResult) > 0) {
-        echo '<table border="0" align="center">
-                <tr>
-                <th width="200px" bgcolor="#999">Naam</th>
-                <th width="200px" bgcolor="#999">Prijs</th>
-                <th width="200px" bgcolor="#999">Omschrijving</th>
-                <th width="200px" bgcolor="#999">Categorienummer</th></tr>';
-
-        while ($prod = mysql_fetch_assoc($productResult)) {
-            echo '<tr>
-                        <td bgcolor="#DDD">' . $prod['Naam'] . '</td>
-                        <td bgcolor="#DDD">' . $prod['Verkoopprijs'] . '</td>
-                        <td bgcolor="#DDD">' . $prod['Omschrijving'] . '</td>
-                        <td bgcolor="#DDD">' . $prod['Categorienr'] . '</td>
-                        <td><a href="control.php?do=manageproducts&edit=' . $prod['Productnr'] . '"><img src="images/edit.png"></a></td>
-                        <td><a href="control.php?do=manageproducts&delete=' . $prod['Productnr'] . '"><img src="images/close.png"></a></td>
-                      </tr>';
+        if (isset($_GET['delete'])) {
+            deleteProductPhoto($_GET['delete']);
+            mysql_query('DELETE FROM Producten WHERE Productnr=' . $_GET['delete']);
         }
 
-        echo '</table>';
-    } else {
-        echo 'Geen producten!';
+        $productResult = mysql_query('SELECT * FROM Producten');
+
+        if (mysql_num_rows($productResult) > 0) {
+            echo '<table border="0" align="center">
+               <tr>
+               <th width="200px" bgcolor="#999">Naam</th>
+               <th width="200px" bgcolor="#999">Prijs</th>
+               <th width="200px" bgcolor="#999">Omschrijving</th>
+               <th width="200px" bgcolor="#999">Categorienummer</th></tr>';
+
+            while ($prod = mysql_fetch_assoc($productResult)) {
+                echo '<tr>
+                       <td bgcolor="#DDD">' . $prod['Naam'] . '</td>
+                       <td bgcolor="#DDD">' . $prod['Verkoopprijs'] . '</td>
+                       <td bgcolor="#DDD">' . $prod['Omschrijving'] . '</td>
+                       <td bgcolor="#DDD">' . $prod['Categorienr'] . '</td>
+                       <td><a href="control.php?do=manageproducts&edit=' . $prod['Productnr'] . '"><img src="images/edit.png"></a>
+                           <a href="control.php?do=manageproducts&delete=' . $prod['Productnr'] . '"><img src="images/close.png"></a></td>
+                     </tr>';
+            }
+
+            echo '</table>';
+        } else {
+            echo 'Geen producten!';
+        }
     }
 }
 
 function manageCategories() {
-    echo '<br><h3>Beheer categorieën</h3>';
+    echo '<br><h3>Beheer categorie�n</h3>';
 
     if (!isset($_GET['edit'])) {
         echo '<br><h4>Voeg categorie toe:</h4><br>';
@@ -184,11 +209,11 @@ function manageCategories() {
         }
 
         echo '<form action="" method="POST">
-                    Naam: <br><input type="text" name="name"><br><br>
-                    <input type="submit" name="addbutton" value="Toevoegen" /> 
-                </form>';
+                   Naam: <br><input type="text" name="name"><br><br>
+                   <input type="submit" name="addbutton" value="Toevoegen" />
+               </form>';
 
-        echo '<br><h4>Beheer bestaanden categorieën:</h4><br>';
+        echo '<br><h4>Beheer bestaanden categorie�n:</h4><br>';
 
         if (isset($_GET['delete'])) {
             mysql_query('DELETE FROM Categorie WHERE Categorienr=' . $_GET['delete']);
@@ -198,22 +223,22 @@ function manageCategories() {
 
         if (mysql_num_rows($categorieResult) > 0) {
             echo '<table border="0" align="center">
-                    <tr>
-                    <th width="100px" bgcolor="#999">Nummer</th>
-                    <th width="200px" bgcolor="#999">Title</th>';
+                   <tr>
+                   <th width="100px" bgcolor="#999">Nummer</th>
+                   <th width="200px" bgcolor="#999">Title</th>';
 
             while ($categorie = mysql_fetch_assoc($categorieResult)) {
                 echo '<tr>
-                            <td bgcolor="#DDD">' . $categorie['Categorienr'] . '</td>
-                            <td bgcolor="#DDD">' . $categorie['Name'] . '</td>
-                            <td><a href="control.php?do=managecategories&edit=' . $categorie['Categorienr'] . '"><img src="images/edit.png"></a></td>
-                            <td><a href="control.php?do=managecategories&delete=' . $categorie['Categorienr'] . '"><img src="images/close.png"></a></td>
-                          </tr>';
+                           <td bgcolor="#DDD">' . $categorie['Categorienr'] . '</td>
+                           <td bgcolor="#DDD">' . $categorie['Name'] . '</td>
+                           <td><a href="control.php?do=managecategories&edit=' . $categorie['Categorienr'] . '"><img src="images/edit.png"></a>
+                               <a href="control.php?do=managecategories&delete=' . $categorie['Categorienr'] . '"><img src="images/close.png"></a></td>
+                         </tr>';
             }
 
             echo '</table>';
         } else {
-            echo 'Geen categorieën!';
+            echo 'Geen categorie�n!';
         }
     } else {
         echo '<br><h4>Bewerk categorie:</h4><br>';
@@ -227,9 +252,9 @@ function manageCategories() {
         $categorie = mysql_fetch_assoc($categorieResult);
 
         echo '<form action="" method="POST">
-                    Naam: <br><input type="text" name="name" value="' . $categorie['Name'] . '"><br><br>
-                    <input type="submit" name="editbutton" value="Bewerk" /> 
-                </form>';
+                   Naam: <br><input type="text" name="name" value="' . $categorie['Name'] . '"><br><br>
+                   <input type="submit" name="editbutton" value="Bewerk" />
+               </form>';
     }
 }
 
@@ -244,10 +269,10 @@ function manageNews() {
         }
 
         echo '<form action="" method="POST">
-                    Title: <br><input type="text" name="title"><br><br>
-                    Bericht: <br><textarea name="newscontent" cols="100" rows="10"></textarea><br><br>
-                    <input type="submit" name="addbutton" value="Toevoegen" /> 
-                </form>';
+                   Title: <br><input type="text" name="title"><br><br>
+                   Bericht: <br><textarea name="newscontent" cols="100" rows="10"></textarea><br><br>
+                   <input type="submit" name="addbutton" value="Toevoegen" />
+               </form>';
 
         echo '<br><h4>Beheer bestaand nieuws:</h4><br>';
 
@@ -259,21 +284,21 @@ function manageNews() {
 
         if (mysql_num_rows($newsResult) > 0) {
             echo '<table border="0" align="center">
-                    <tr>
-                    <th width="200px" bgcolor="#999">Nummer</th>
-                    <th width="200px" bgcolor="#999">Title</th>
-                    <th width="200px" bgcolor="#999">Bericht</th>
-                    <th width="200px" bgcolor="#999">Date</th></tr>';
+                   <tr>
+                   <th width="200px" bgcolor="#999">Nummer</th>
+                   <th width="200px" bgcolor="#999">Title</th>
+                   <th width="200px" bgcolor="#999">Bericht</th>
+                   <th width="200px" bgcolor="#999">Date</th></tr>';
 
             while ($news = mysql_fetch_assoc($newsResult)) {
                 echo '<tr>
-                            <td bgcolor="#DDD">' . $news['Newsnr'] . '</td>
-                            <td bgcolor="#DDD">' . $news['Title'] . '</td>
-                            <td bgcolor="#DDD">' . $news['Message'] . '</td>
-                            <td bgcolor="#DDD">' . $news['Date'] . '</td>
-                            <td><a href="control.php?do=managenews&edit=' . $news['Newsnr'] . '"><img src="images/edit.png"></a></td>
-                            <td><a href="control.php?do=managenews&delete=' . $news['Newsnr'] . '"><img src="images/close.png"></a></td>
-                          </tr>';
+                           <td bgcolor="#DDD">' . $news['Newsnr'] . '</td>
+                           <td bgcolor="#DDD">' . $news['Title'] . '</td>
+                           <td bgcolor="#DDD">' . $news['Message'] . '</td>
+                           <td bgcolor="#DDD">' . $news['Date'] . '</td>
+                           <td><a href="control.php?do=managenews&edit=' . $news['Newsnr'] . '"><img src="images/edit.png"></a>
+                               <a href="control.php?do=managenews&delete=' . $news['Newsnr'] . '"><img src="images/close.png"></a></td>
+                         </tr>';
             }
 
             echo '</table>';
@@ -292,10 +317,10 @@ function manageNews() {
         }
 
         echo '<form action="" method="POST">
-                    Title: <br><input type="text" name="title" value="' . $news['Title'] . '"><br><br>
-                    Bericht: <br><textarea name="newscontent" cols="100" rows="10">' . $news['Message'] . '</textarea><br><br>
-                    <input type="submit" name="editbutton" value="Bewerk" /> 
-                </form>';
+                   Title: <br><input type="text" name="title" value="' . $news['Title'] . '"><br><br>
+                   Bericht: <br><textarea name="newscontent" cols="100" rows="10">' . $news['Message'] . '</textarea><br><br>
+                   <input type="submit" name="editbutton" value="Bewerk" />
+               </form>';
     }
 }
 
@@ -312,11 +337,11 @@ function changeAbout() {
     $about = mysql_fetch_row($aboutResult);
 
     echo '<form action="" method="POST">
-                <textarea name="aboutcontent" cols="100" rows="20">'
+               <textarea name="aboutcontent" cols="100" rows="20">'
     . $about[0] .
     '</textarea><br><br>
-                <input type="submit" name="submitbutton" value="Bewerk" />  
-            </form>';
+               <input type="submit" name="submitbutton" value="Bewerk" />  
+           </form>';
 }
 
 displayHeader('Configuratiescherm');
@@ -324,7 +349,7 @@ displayHeader('Configuratiescherm');
 echo '<h2>Configuratiescherm</h2><br>';
 
 echo '<center><a href="control.php?do=customerorderlog">Klant bestellog</a> | <a href="control.php?do=generalsettings">Algemene instellingen</a> | <a href="control.php?do=manageproducts">Beheer producten</a>
-    | <a href="control.php?do=managecategories">Beheer categorie</a> | <a href="control.php?do=managenews">Beheer nieuws</a> | <a href="control.php?do=changeabout">Verander over ons pagina</a></center>';
+   | <a href="control.php?do=managecategories">Beheer categorie</a> | <a href="control.php?do=managenews">Beheer nieuws</a> | <a href="control.php?do=changeabout">Verander over ons pagina</a></center>';
 
 $connection = mysql_connect('project13.db.12050811.hostedresource.com', 'project13', 'Aantafel13!');
 mysql_select_db('project13', $connection);

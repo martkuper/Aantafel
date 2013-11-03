@@ -44,7 +44,7 @@ function process_voornaam(){
         xmlHttp.onreadystatechange = handleServerResponse_voornaam;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("voornaam=" + input);
-        return;
+
     }else{
         alert("Something went wrong!");
     }
@@ -67,7 +67,7 @@ function handleServerResponse_voornaam(){
                 document.getElementById("voornaam_image").src="images/tick.png";
             }
                         
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -84,7 +84,7 @@ function process_achternaam(){
         xmlHttp.onreadystatechange = handleServerResponse_achternaam;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("achternaam=" + input);
-        return;
+
     }else{
     }
        
@@ -106,7 +106,7 @@ function handleServerResponse_achternaam(){
                 document.getElementById("achternaam_image").src="images/tick.png";
             }
                         
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -123,7 +123,7 @@ function process_adres(){
         xmlHttp.onreadystatechange = handleServerResponse_adres;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("adres=" + input);
-        return;
+
     }else{
     }
        
@@ -142,9 +142,9 @@ function handleServerResponse_adres(){
                 document.getElementById("huisnummer_error").remove();
             }
             
-            adres = document.getElementById("adres").value
+            adres = document.getElementById("adres").value;
             huisnummer = adres.split(" ");
-            huisnummer_length = huisnummer.length
+            huisnummer_length = huisnummer.length;
             huisnummer = huisnummer[huisnummer_length - 1];
             pattern = /[0-9]+[a-zA-Z]?/i;
                         
@@ -167,7 +167,7 @@ function handleServerResponse_adres(){
             
             
                         
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -184,7 +184,7 @@ function process_postcode(){
         xmlHttp.onreadystatechange = handleServerResponse_postcode;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("postcode=" + input);
-        return;
+
     }else{
     }
        
@@ -206,7 +206,7 @@ function handleServerResponse_postcode(){
                 document.getElementById("postcode_image").src="images/tick.png";
             }
                         
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -223,7 +223,7 @@ function process_stad(){
         xmlHttp.onreadystatechange = handleServerResponse_stad;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("stad=" + input);
-        return;
+
     }else{
     }
        
@@ -245,7 +245,7 @@ function handleServerResponse_stad(){
                 document.getElementById("stad_image").src="images/tick.png";
             }
                         
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -262,7 +262,7 @@ function process_telefoon(){
         xmlHttp.onreadystatechange = handleServerResponse_telefoon;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("telefoon=" + input);
-        return;
+
     }else{
     }
        
@@ -284,7 +284,7 @@ function handleServerResponse_telefoon(){
                 document.getElementById("telefoon_image").src="images/tick.png";
             }
                         
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -301,7 +301,7 @@ function process_email(){
         xmlHttp.onreadystatechange = handleServerResponse_email;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("email=" + input);
-        return;
+
     }else{
     }
        
@@ -326,7 +326,7 @@ function handleServerResponse_email(){
                 document.getElementById("email_image").src="images/close.png";
             }
             
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -343,7 +343,7 @@ function process_password(){
         xmlHttp.onreadystatechange = handleServerResponse_password;
         xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlHttp.send("password=" + input);
-        return;
+
     }else{
     }
        
@@ -365,7 +365,7 @@ function handleServerResponse_password(){
                 document.getElementById("password_image").src="images/tick.png";
             }
                         
-            return;
+
         }else{
             alert('Something went wrong!');
         }
@@ -406,4 +406,27 @@ function checkfields(){
         console.log("mislukt");
     }
             
+}
+
+function checkfields2(){
+    if(document.getElementById("reset_error")){
+        document.getElementById("reset_error").remove();
+    }
+
+    password = document.getElementById("password_image").src;
+    password = /[^/]*$/.exec(password)[0];
+
+
+    if(password == "tick.png"){
+        document.getElementById("verzend").disabled = false;
+        console.log("gelukt");
+    }else{
+        newdiv = document.createElement("div");
+        newdiv.id="reset_error";
+        newdiv.innerHTML = "Je hebt een ongeldig wachtwoord ingevuld. <br>";
+        newdiv.innerHTML = "Je wachtwoord moet ten minste 8 tekens lang zijn";
+        document.getElementById("button").appendChild(newdiv);
+        console.log("mislukt");
+    }
+
 }

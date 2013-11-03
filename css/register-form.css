@@ -295,7 +295,7 @@ form:after {
     display: inline-block;
     height: 16px;
     width: 16px;
-    padding-top: 39px;
+    padding-top: 40px;
     border: none;
 }
 
@@ -303,7 +303,7 @@ form:after {
     display: inline-block;
     height: 16px;
     width: 16px;
-    padding-top: 36px;
+    padding-top: 42px;
     border: none;
 }
 
@@ -319,7 +319,7 @@ form:after {
     display: inline-block;
     height: 16px;
     width: 16px;
-    padding-top: 40px;
+    padding-top: 42px;
     border: none;
 }
 
@@ -327,6 +327,6 @@ form:after {
     display: inline-block;
     height: 16px;
     width: 16px;
-    padding-top: 38px;
+    padding-top: 40px;
     border: none;
 }

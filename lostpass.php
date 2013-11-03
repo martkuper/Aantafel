@@ -45,6 +45,10 @@ echo '
                 echo 'Er is een fout opgetreden. <br>';
                 echo 'Probeer het later nog eens.';
             }
+            if (isset($_GET['sent']) && $_GET['sent'] == 3) {
+                echo 'Je hebt een ongeldig email addres ingevuld. <br>';
+                echo 'Probeer het nog eens.';
+            }
 echo '
 		</div><!-- button -->
 	</section><!-- content -->

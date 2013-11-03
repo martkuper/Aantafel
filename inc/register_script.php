@@ -10,7 +10,7 @@ include 'db_connect.php';
 //echo basename($_SERVER['REQUEST_URI']); <script>document.write(window.location.hash); </script><?php
 
 //Het gehashte wachtwoord dat je van het formulier (via javascript) ontvangt
-$password = $_POST['p']; 
+$password = preg_replace("/[^a-zA-Z0-9]+/", "", $_POST['p']);
 
 //De overige geposte variabelen
 $voornaam = preg_replace("/[^a-zA-Z]+/", "", $_POST['voornaam']);
@@ -36,7 +36,7 @@ $password = hash('sha512', $password.$random_salt);
 
 //Voeg toe aan de database
 
-try{
+try{ 
 
     $insert_stmt = $link->prepare("INSERT INTO Klant (Klantnr, Achternaam, Voornaam, Adres, Postcode, Stad, Email, Telefoon, Wachtwoord, Salt, Admin)
                                    VALUES (DEFAULT, :achternaam, :voornaam, :adres, :postcode, :stad, :email, :telefoon, :wachtwoord, :salt, 0)");
