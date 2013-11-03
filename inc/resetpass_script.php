@@ -37,8 +37,8 @@ try{
 }
 
 if($stmt->rowCount() == 1){
-    echo 'wachtwoord update geslaagd!';
+    header('Location: /@tafel/login.php?status=2');
 }else{
-    echo 'wachtwoord update mislukt';
+    header('Location: /@tafel/resetpass.php?status=3');
 }
 

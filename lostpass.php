@@ -38,8 +38,8 @@ echo '
 		</form><!-- form -->
 		<div class="button">';
 			if(isset($_GET['sent']) && $_GET['sent'] == 1){
-                echo '<div style="color: red; font-size: 16px">Wachtwoord verzonden. <br></div>';
-                echo '<div style="color: red; font-size: 16px">Het kan even duren voordat je je mail ontvangt.</div>';
+                echo '<div style="color: green; font-size: 16px">Wachtwoord verzonden. <br></div>';
+                echo '<div style="color: green; font-size: 16px">Het kan even duren voordat je je mail ontvangt.</div>';
             }
             if(isset($_GET['sent']) && $_GET['sent'] == 2){
                 echo '<div style="color: red; font-size: 16px">Er is een fout opgetreden. <br></div>';

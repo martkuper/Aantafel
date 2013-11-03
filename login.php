@@ -45,7 +45,13 @@ echo '
             }
             if(isset($_GET['status']) && $_GET['status'] == 1){
                 echo '<div style="color: green; font-size: 16px">Je account is succesvol aangemaakt. <br></div>';
-
+            }
+            if(isset($_GET['status']) && $_GET['status'] == 2){
+                echo '<div style="color: green; font-size: 16px">Je wachtwoord is succesvol veranderd. <br></div>';
+            }
+            if(isset($_GET['status']) && $_GET['status'] == 3){
+                echo '<div style="color: red; font-size: 16px">Het veranderen van je wachtwoord is mislukt. <br></div>';
+                echo '<div style="color: red; font-size: 16px">Probeer het later nog eens. <br></div>';
             }
 echo '
 		</div><!-- button -->

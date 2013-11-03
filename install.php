@@ -1,19 +1,19 @@
 <?php
-
-/* REGISTER.PHP
- * 
- * Created by Mart Kuper
- * Last edit date 10/31/2013
+/**
+ * Created by PhpStorm.
+ * User: martkuper
+ * Date: 11/3/13
+ * Time: 8:03 PM
  */
 
 
-include 'inc/header.php';
-include 'inc/cart.php';
-include 'inc/footer.php';
+if(isset($_GET['step']) && $_GET['step'] == 1){
+    include 'inc/install_header.php';
+    include 'inc/footer.php';
 
-displayHeader('Account maken');
+    displayHeader('Administrator account maken');
 
-echo '
+    echo '
 <link type="text/css" rel="stylesheet" href="css/register-form.css" />
 <script type="text/javascript" src="js/sha512.js"></script>
 <script type="text/javascript" src="js/form.js"></script>
@@ -27,8 +27,8 @@ echo '
 
 <div class="container">
         <section id="content">
-		<form action="inc/register_script.php" method="POST" name="login_form">
-                    <h1>Registreer</h1>
+		<form action="inc/process_install.php?step=1" method="POST" name="login_form">
+                    <h1>Maak account</h1>
                         <div>
                             <input name="voornaam" type="text" onblur="process_voornaam();" placeholder="Voornaam" id="voornaam" required/>
                             <div id="voornaam_status"><img id="voornaam_image" src="images/trans-back.png" /></div>
@@ -62,20 +62,25 @@ echo '
                             <div id="password_status"><img id="password_image" src="images/trans-back.png" /></div>
 			</div>
 			<div onmouseover="checkfields()">
-                            <input type="button" id="register" value="Registreer" name="submitbutton" onclick="formhash(this.form, this.form.password);"/>
+                            <input type="button" id="register" value="Maak account" name="submitbutton" onclick="formhash(this.form, this.form.password);"/>
                             <!--<input  type="button" id="register" value="Registreer" name="submitbutton" />-->
                         </div>
 		</form><!-- form -->
 		<div class="button" id="button">';
-			if(isset($_GET['error']) && $_GET['error'] == 1){
-                echo '<div style="color: red; font-size: 16px">Dit email addres is al geregistreerd. <br></div>';
-                echo '<div style="color: red; font-size: 16px">Als je je wachtwoord niet meer weet, klik dan op `wachtwoord vergeten`.</div>';
+            if(isset($_GET['error']) && $_GET['error'] == 1){
+                echo '<div style="color: red; font-size: 16px">Je bent iets vergeten in te vullen</div>';
             }
-echo '
+
+    echo '
 		</div><!-- button -->
 	</section><!-- content -->
 </div><!-- container -->
 ';
-displayFooter();
 
-?>
+}
+
+if(isset($_GET['step']) && $_GET['step'] == 2){
+    if(isset($_GET['status']) && $_GET['status'] == 1){
+        echo 'Account maken geslaagd!';
+    }
+}
