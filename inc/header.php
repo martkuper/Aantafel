@@ -52,8 +52,10 @@ function displayHeader($pageTitle) {
                         }
 
                         if(!isset($_SESSION['klantnr'])){
-                            echo '<li><a href="login.php">inloggen/registreren</a></li>';
+                            echo '<li><a href="login.php">inloggen</a></li>';
+                            echo '<li><a href="register.php">account maken</a></li>';
                         }else{
+                            echo '<li><a href="changepass.php">wachtwoord veranderen</a></li>';
                             echo '<li><a href="logout.php">uitloggen</a></li>';
                         }
 

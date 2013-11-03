@@ -18,7 +18,7 @@ function displayCart() {
             <div id="cartbox"><img src="images/close.png"><h4>Pizza Margherita €9,95</h4></div>
             <div id="cartbox"><img src="images/close.png"><h4>Pizza Margherita €9,95</h4></div><br><br><br><br><div id="orderbutton"><a href="order.php">Afrekenen</a></div></div>';
     } else {
-        echo '<h3><center>U moet ingelogt zijn om te kunnen bestellen!</center></h3></div>';
+        echo '<h3><center>U moet ingelogd zijn om te kunnen bestellen!</center></h3></div>';
     }
     
     echo '<div class="content" align="center">';

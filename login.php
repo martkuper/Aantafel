@@ -18,11 +18,7 @@ echo '
 <script type="text/javascript" src="js/sha512.js"></script>
 <script type="text/javascript" src="js/form.js"></script>
 ';
-if(isset($_GET['error']) && $_GET['error'] == 1){
-    echo 'Je hebt een verkeerd wachtwoord ingevuld';
-}elseif(isset($_GET['error']) && $_GET['error'] == 2){
-    echo 'Je account is geblokkeerd';
-}
+
 echo '
 <div class="container">
         <section id="content2">
@@ -41,8 +37,17 @@ echo '
 				<a href="lostpass.php">Wachtwoord vergeten?</a>
 			</div>
 		</form><!-- form -->
-		<div class="button">
-			<a href="register.php">Maak een account</a>
+		<div class="button">';
+            if(isset($_GET['error']) && $_GET['error'] == 1){
+                echo '<div style="color: red; font-size: 16px">Je hebt een verkeerd wachtwoord ingevuld.</div>';
+            }elseif(isset($_GET['error']) && $_GET['error'] == 2){
+                echo '<div style="color:red; font-size: 16px">Je account is geblokkeerd.</div>';
+            }
+            if(isset($_GET['status']) && $_GET['status'] == 1){
+                echo '<div style="color: green; font-size: 16px">Je account is succesvol aangemaakt. <br></div>';
+
+            }
+echo '
 		</div><!-- button -->
 	</section><!-- content -->
 </div><!-- container -->

@@ -58,9 +58,14 @@ try{
 
     
     $insert_stmt->execute();
+    if($insert_stmt->rowCount() == 1){
+        header('Location: /@tafel/login.php?status=1');
+    }
     
     }catch(PDOException $e){
     trigger_error("MySQL connection failure: " . $e->getMessage(), E_USER_ERROR);
 
-};
+}
+
+
 ?>
