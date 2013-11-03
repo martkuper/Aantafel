@@ -71,8 +71,8 @@ echo '
 		</form><!-- form -->
 		<div class="button" id="button">';
 			if(isset($_GET['error']) && $_GET['error'] == 1){
-                echo 'Dit email addres is al geregistreerd. <br>';
-                echo 'Als je je wachtwoord niet meer weet, klik dan op `wachtwoord vergeten`.';
+                echo '<div style="color: red; font-size: 16px">Dit email addres is al geregistreerd. <br></div>';
+                echo '<div style="color: red; font-size: 16px">Als je je wachtwoord niet meer weet, klik dan op `wachtwoord vergeten`.</div>';
             }
 echo '
 		</div><!-- button -->

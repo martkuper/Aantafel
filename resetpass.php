@@ -55,12 +55,12 @@ echo '
 		</form><!-- form -->
 		<div class="button" id="button">';
 			if(isset($_GET['error']) && $_GET['error'] == 1){
-                echo 'Ongeldig verzoek. <br>';
-                echo 'Probeer het opnieuw.';
+                echo '<div style="color: red; font-size: 16px">Ongeldig verzoek. <br></div>';
+                echo '<div style="color: red; font-size: 16px">Probeer het opnieuw.</div>';
             }
             if(isset($_GET['error']) && $_GET['error'] == 2){
-                echo 'Je moet een wachtwoord invullen. <br>';
-                echo 'Probeer het nog eens.';
+                echo '<div style="color: red; font-size: 16px">Je moet een wachtwoord invullen. <br></div>';
+                echo '<div style="color: red; font-size: 16px">Probeer het nog eens.</div>';
             }
 echo '
 		</div><!-- button -->

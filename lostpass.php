@@ -12,7 +12,7 @@ include 'inc/cart.php';
 include 'inc/footer.php';
 
 displayHeader('Wachtwoord vergeten');
-
+ 
 echo '
 <link type="text/css" rel="stylesheet" href="css/lostpass-form.css" />
 <script type="text/javascript" src="js/sha512.js"></script>
@@ -38,16 +38,16 @@ echo '
 		</form><!-- form -->
 		<div class="button">';
 			if(isset($_GET['sent']) && $_GET['sent'] == 1){
-                echo 'Wachtwoord verzonden. <br>';
-                echo 'Het kan even duren voordat je je mail ontvangt.';
+                echo '<div style="color: red; font-size: 16px">Wachtwoord verzonden. <br></div>';
+                echo '<div style="color: red; font-size: 16px">Het kan even duren voordat je je mail ontvangt.</div>';
             }
             if(isset($_GET['sent']) && $_GET['sent'] == 2){
-                echo 'Er is een fout opgetreden. <br>';
-                echo 'Probeer het later nog eens.';
+                echo '<div style="color: red; font-size: 16px">Er is een fout opgetreden. <br></div>';
+                echo '<div style="color: red; font-size: 16px">Probeer het later nog eens.</div>';
             }
             if (isset($_GET['sent']) && $_GET['sent'] == 3) {
-                echo 'Je hebt een ongeldig email addres ingevuld. <br>';
-                echo 'Probeer het nog eens.';
+                echo '<div style="color: red; font-size: 16px">Je hebt een ongeldig email addres ingevuld. <br></div>';
+                echo '<div style="color: red; font-size: 16px">Probeer het nog eens.</div>';
             }
 echo '
 		</div><!-- button -->
