@@ -11,7 +11,7 @@ include 'db_connect.php';
 $email = preg_replace("/@[^a-zA-Z]+/", "", $_POST['email']);
 $Wachtwoord = '';
 
-$stmt = $link->prepare("SELECT Wachtwoord FROM Klant WHERE Email=:email");
+$stmt = $link->prepare("SELECT Wachtwoord, Klantnr FROM Klant WHERE Email=:email");
 $stmt->execute(array(':email' => $email));
 while($row = $stmt->fetch()){
     extract($row);
@@ -24,7 +24,7 @@ $bericht = '
         <p>Wachtwoord opnieuw instellen</p> <br><br>
         Je ontvangt deze email omdat je hebt aangegeven dat je je wachtwoord bij Aantafel bent vergeten. <br>
         Heb je dit niet gedaan? Dan kun je deze email beschouwen als niet verzonden. <br><br>
-        Klik <a href="eltrastero.nl/@tafel/resetpass.php?token=' . $Wachtwoord . '">hier</a> om een nieuw wachtwoord in te stellen,
+        Klik <a href="eltrastero.nl/@tafel/resetpass.php?token=' . $Wachtwoord . '&id=' . $Klantnr . '">hier</a> om een nieuw wachtwoord in te stellen,
         je wordt dan doorgestuurd naar onze website waar je je nieuwe wachtwoord kunt invullen.<br>
     </body>
     </html>
