@@ -24,7 +24,7 @@ echo '<response>';
 
     if($input == ''){
         echo '<div id="enter_email"></div>';
-    }elseif($input == $email){
+    }elseif($input == $Email){
         echo '<div id="email_exists"></div>';
     }elseif(strlen($input) < 10){
         echo '<div id="enter_email"></div>';

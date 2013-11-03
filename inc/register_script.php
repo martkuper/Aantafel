@@ -21,11 +21,15 @@ $stad = preg_replace("/[^a-zA-Z]+/", "", $_POST['stad']);
 $telefoon = preg_replace("/[^0-9]+/", "", $_POST['telefoon']);
 $email = preg_replace("/@[^a-zA-Z]+/", "", $_POST['email']);
 
+$stmt = $link->prepare("SELECT Email FROM Klant WHERE Email=:email");
+$stmt->execute(array(':email' => $email));
+while($row = $stmt->fetch()){
+    extract($row);
+}
 
 
-
-if(empty($password) || empty($voornaam) || empty($achternaam) || empty($adres) || empty($postcode) || empty($stad) || empty($telefoon) || empty($email) || strlen($password) <> 128){
-    header('Location: /@tafel/register.php');
+if(empty($password) || empty($voornaam) || empty($achternaam) || empty($adres) || empty($postcode) || empty($stad) || empty($telefoon) || empty($email) || strlen($password) <> 128 || $email == $Email){
+    header('Location: /@tafel/register.php?error=1');
 }
 ;
 //Maak een random salt
