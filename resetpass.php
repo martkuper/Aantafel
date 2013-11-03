@@ -2,16 +2,16 @@
 /**
  * Created by PhpStorm.
  * User: martkuper
- * Date: 11/2/13
- * Time: 5:49 PM
+ * Date: 11/3/13
+ * Time: 2:23 PM
  */
-
 
 include 'inc/header.php';
 include 'inc/cart.php';
 include 'inc/footer.php';
 
-displayHeader('Wachtwoord vergeten');
+displayHeader('Reset wachtwoord');
+
 
 echo '
 <link type="text/css" rel="stylesheet" href="css/lostpass-form.css" />
@@ -24,10 +24,10 @@ echo '
 <div class="container">
         <section id="content2">
 		<form action="inc/lostpass_script.php" method="POST" name="lostpass_form">
-			<h1>Wachtwoord vergeten</h1>
+			<h1>Nieuw Wachtwoord</h1>
 			<div>
 				<!--<input name="email" autocomplete="off" type="text" placeholder="Email" required id="email"/>-->
-                                    <input name="email" type="email" autocomplete="off" placeholder="Email" id="email" required/>
+                                    <input name="password" type="password" autocomplete="off" placeholder="Nieuw Wachtwoord" id="password" required/>
 
                                 <!--<div id="status"><img id="image" src="images/trans-back.png" /></div>-->
 			</div>
