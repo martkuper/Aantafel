@@ -1,6 +1,6 @@
 <?php
 
-/* MENU.PHP
+/* CONTROL.PHP
  * 
  * Created by Loran Oosterhaven and Hein Rietman
  * Start date 10/29/2013
@@ -11,8 +11,8 @@ include 'inc/header.php';
 include 'inc/cart.php';
 include 'inc/footer.php';
 
-#define MAXIMGSIZE 20000000
-#define PHOTOPATH "images/products/"
+define("MAXIMGSIZE", 250000);
+define("PHOTOPATH", "images/products/");
 
 function uploadPhoto() {
     if (($_FILES["photo"]["type"] == "image/png") ||
@@ -101,7 +101,7 @@ function manageProducts() {
     }
 
     if (isset($_POST['submiteditbutton'])) {
-        
+        $q = "UPDATE Producten SET"
     }
 
     if (isset($_GET['edit'])) {
@@ -117,7 +117,7 @@ function manageProducts() {
             <tr><td>Categorienummer: </td> <td><input type="text" name="categorienr" value= ' . $product['Categorienr'] . '></td></tr>
             <tr><td>Upload een foto: </td> <td><input type="file" name="photo"></td></tr>
             <tr><td><br></td></tr>
-            <tr><td><td><input type="submit" name="submiteditbutton" value="Toevoegen"/></td></td></tr>
+            <tr><td><td><input type="submit" name="submiteditbutton" value="Bewerk"/></td></td></tr>
             </table>
             </form>';
     } else {
@@ -135,7 +135,7 @@ function manageProducts() {
         }
 
         echo '</select><br><br>
-                Upload een foto: <br><input type="file" name="photo"><br><br>
+                Upload een foto: maximale grootte : ' . MAXIMGSIZE/1000 . 'kb <br><input type="file" name="photo"><br><br>
                 <input type="submit" name="addbutton" value="Toevoegen"/>
                 </form>';
     }
