@@ -11,4 +11,4 @@ include 'inc/db_connect.php';
 begin_secure_session();
 
 echo login_user("martkuper@hotmail.com", "asdfasdf", $link);
-echo 'test_updatde2';
+echo 'test_updatdde2';
