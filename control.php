@@ -14,44 +14,19 @@ include 'inc/footer.php';
 define("MAXIMGSIZE", 250000);
 define("PHOTOPATH", "images/products/");
 
-function is_image($path){
-    //http://www.binarytides.com/php-check-if-file-is-an-image/
-    $a = getimagesize($path);
-    $image_type = $a[2];
-     
-    if(in_array($image_type , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP))){
-        return true;
-    }
-    return false;
-}
-
-function uploadPhoto() {
+function uploadPhoto( $name ) {
     if (($_FILES["photo"]["type"] == "image/png") ||
             ($_FILES["photo"]["type"] == "image/jpeg") ||
             ($_FILES["photo"]["type"] == "image/pjpeg") && $_FILES["photo"]["size"] < MAXIMGSIZE) {
         if ($_FILES["photo"]["error"] > 0) {
             return false;
-        } else {
-            $ext = "." . end(explode(".", $_FILES["photo"]["name"]));
-            $photoname = hash('md5', $_FILES["photo"]["name"] . $_SERVER["HTTP_USER_AGENT"] . time());
-            $photoname .= $ext;
-            $_FILES["photo"]["name"] = $photoname;
-
-            move_uploaded_file($_FILES["photo"]["tmp_name"], PHOTOPATH . $_FILES["photo"]["name"]);
+        } else {            
+            move_uploaded_file($_FILES["photo"]["tmp_name"], PHOTOPATH . $name);
             return true;
         }
     } else {
         return false;
     }
-}
-
-function deleteProductPhoto($s){
-    $res = mysql_query("SELECT * FROM Producten WHERE Productnr =" . $s);
-    $row = mysql_fetch_assoc($res);
-    $fp = $row['Image'];
-    if (is_file($fp) && is_image($fp)){
-        unlink($fp);
-  }
 }
 
 function showCustomerOrderLog() {
@@ -110,9 +85,16 @@ function generalSettings() {
 
 function manageProducts() {
     echo '<br><h3>Beheer producten</h3>';
-    
+
     if (isset($_POST['addbutton'])) {
-        if (uploadPhoto()) {
+        
+        $photoname = str_replace(' ', '_', $_POST['name']);
+        $ext = "." . end(explode(".", $_FILES["photo"]["name"]));
+        
+        $photoname .= $ext;
+        $_FILES["photo"]["name"] .= $ext;
+        
+        if (uploadPhoto($photoname)) {
             $q = 'INSERT INTO Producten VALUES (\'DEFAULT\', \'' . $_POST['name'] . '\', \'' . $_POST['price']
                     . '\', \'' . $_POST['description'] . '\', \'' . PHOTOPATH . $_FILES['photo']['name'] . '\', ' . $_POST['categorienr'] . ')';
             mysql_query($q);
@@ -121,10 +103,15 @@ function manageProducts() {
     }
 
     if (isset($_POST['submiteditbutton'])) {
-        if (!empty($_FILES) && uploadPhoto()) {
-            $q = sprintf("UPDATE Producten SET Naam='%s', Verkoopprijs=%f, Omschrijving='%s', Image = '%s',Categorienr=%d where Productnr=%d", mysql_real_escape_string($_POST['name']), mysql_real_escape_string($_POST['price']), mysql_real_escape_string($_POST['description']), mysql_real_escape_string(PHOTOPATH . $_FILES['photo']['name']), mysql_real_escape_string($_POST['categorienr']), mysql_real_escape_string($_GET['edit']));
+        $photoname = str_replace(' ', '_', $_POST['name']);
+        $ext = "." . end(explode(".", $_FILES["photo"]["name"]));
+        
+        $photoname .= $ext;
+        $_FILES["photo"]["name"] .= $ext;
+        
+        if (!empty($_FILES) && uploadPhoto( $photoname )) {
+            $q = sprintf("UPDATE Producten SET Naam='%s', Verkoopprijs=%f, Omschrijving='%s', Image = '%s',Categorienr=%d where Productnr=%d", mysql_real_escape_string($_POST['name']), mysql_real_escape_string($_POST['price']), mysql_real_escape_string($_POST['description']), mysql_real_escape_string(PHOTOPATH . $photoname), mysql_real_escape_string($_POST['categorienr']), mysql_real_escape_string($_GET['edit']));
         } else {
-            // Geen foto ge-upload
             $q = sprintf("UPDATE Producten SET Naam='%s', Verkoopprijs=%f, Omschrijving='%s', Categorienr=%d where Productnr=%d", mysql_real_escape_string($_POST['name']), mysql_real_escape_string($_POST['price']), mysql_real_escape_string($_POST['description']), mysql_real_escape_string($_POST['categorienr']), mysql_real_escape_string($_GET['edit']));
         }
 
@@ -141,7 +128,7 @@ function manageProducts() {
            Prijs: <br><input type="text" name="price" value= ' . $product['Verkoopprijs'] . '><br><br>
            Omschrijving: <br><input type="text" name="description" value= ' . $product['Omschrijving'] . '><br><br>
            Categorienummer: <br><input type="text" name="categorienr" value= ' . $product['Categorienr'] . '><br><br>
-           Upload een foto (maximale grootte : ' . MAXIMGSIZE / 1000 . 'kb) <br><input type="file" name="photo"><br><br>
+           Upload een foto (maximale grootte ' . MAXIMGSIZE / 1000 . 'kb): <br><input type="file" name="photo"><br><br>
            <input type="submit" name="submiteditbutton" value="Bewerk"/>
            </form>';
     } else {
@@ -159,14 +146,13 @@ function manageProducts() {
         }
 
         echo '</select><br><br>
-               Upload een foto (maximale grootte : ' . MAXIMGSIZE / 1000 . ')kb <br><input type="file" name="photo"><br><br>
+               Upload een foto (maximale grootte ' . MAXIMGSIZE / 1000 . 'kb): <br><input type="file" name="photo"><br><br>
                <input type="submit" name="addbutton" value="Toevoegen"/>
                </form>';
 
         echo '<br><h4>Beheer bestaand product</h4><br>';
 
         if (isset($_GET['delete'])) {
-            deleteProductPhoto($_GET['delete']);
             mysql_query('DELETE FROM Producten WHERE Productnr=' . $_GET['delete']);
         }
 
@@ -199,7 +185,7 @@ function manageProducts() {
 }
 
 function manageCategories() {
-    echo '<br><h3>Beheer categorieï¿½n</h3>';
+    echo '<br><h3>Beheer categorieën</h3>';
 
     if (!isset($_GET['edit'])) {
         echo '<br><h4>Voeg categorie toe:</h4><br>';
@@ -213,7 +199,7 @@ function manageCategories() {
                    <input type="submit" name="addbutton" value="Toevoegen" />
                </form>';
 
-        echo '<br><h4>Beheer bestaanden categorieï¿½n:</h4><br>';
+        echo '<br><h4>Beheer bestaanden categorieën:</h4><br>';
 
         if (isset($_GET['delete'])) {
             mysql_query('DELETE FROM Categorie WHERE Categorienr=' . $_GET['delete']);
@@ -238,7 +224,7 @@ function manageCategories() {
 
             echo '</table>';
         } else {
-            echo 'Geen categorieï¿½n!';
+            echo 'Geen categorieën!';
         }
     } else {
         echo '<br><h4>Bewerk categorie:</h4><br>';
